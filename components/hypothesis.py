@@ -8,10 +8,18 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from scipy import stats
 
-def page_function():
-    # 전역 변수 사용
-    global merged_df1
-    
+@st.cache_data
+def load_data():
+    try:
+        url = 'https://github.com/seungmin956/toilet_project_lfs/raw/master/data/data.csv'
+        df = pd.read_csv(url, encoding='utf-8')
+        return df
+    except Exception as e:
+        st.error(f"데이터 로드 오류: {str(e)}")
+        return pd.DataFrame()
+
+merged_df1 = load_data()
+
 def page4_hypothesis_testing():
     """4페이지: 통계적 검증 (가설검정)"""
     
