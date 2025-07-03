@@ -1,5 +1,3 @@
-# conponents/time_check.py
-
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -7,12 +5,24 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-def page_function():
-    # 전역 변수 사용
-    global merged_df1
-    
 def page1_hourly_analysis():
     """1페이지: 시간대별 화장실 대란 분석"""
+
+    @st.cache_data
+    def load_data():
+        try:
+            url = 'https://github.com/seungmin956/toilet_project_lfs/raw/master/data/data.csv'
+            df = pd.read_csv(url, encoding='utf-8')
+            return df
+        except Exception as e:
+            st.error(f"데이터 로드 오류: {str(e)}")
+            return pd.DataFrame()
+    
+    merged_df1 = load_data()
+    
+    if merged_df1.empty:
+        st.error("데이터를 불러올 수 없습니다.")
+        return
     
     st.info("시간대/성별에 따른 화장실 수급 분석을 진행합니다.")
     
@@ -91,8 +101,6 @@ def page1_hourly_analysis():
     hourly_data = calculate_hourly_summary(filtered_data, use_weights)
     
     # 상단 지표 카드들
-    # st.subheader(f"📊 핵심 지표{region_text}")
-    
     col1, col2, col3= st.columns(3)
     
     with col1:
@@ -131,9 +139,6 @@ def page1_hourly_analysis():
         )
     
     # 메인 차트 영역
-    # st.subheader("📈 시간대별 화장실 수급 분석")
-    
-    # 좌측 컬럼: 수급 비율 차트
     col_left, col_right = st.columns([1, 1])
     
     with col_left:
