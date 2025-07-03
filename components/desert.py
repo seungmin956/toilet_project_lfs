@@ -4,9 +4,17 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
-def page_function():
-    # 전역 변수 사용
-    global merged_df1
+@st.cache_data
+def load_data():
+    try:
+        url = 'https://github.com/seungmin956/toilet_project_lfs/raw/master/data/data.csv'
+        df = pd.read_csv(url, encoding='utf-8')
+        return df
+    except Exception as e:
+        st.error(f"데이터 로드 오류: {str(e)}")
+        return pd.DataFrame()
+
+merged_df1 = load_data()
     
 def page2_desert_analysis():
     """2페이지: 화장실 사막 지역 발굴 분석"""
