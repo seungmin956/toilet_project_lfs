@@ -5,6 +5,18 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
+@st.cache_data
+def load_data():
+    try:
+        url = 'https://github.com/seungmin956/toilet_project_lfs/raw/master/data/data.csv'
+        df = pd.read_csv(url, encoding='utf-8')
+        return df
+    except Exception as e:
+        st.error(f"데이터 로드 오류: {str(e)}")
+        return pd.DataFrame()
+
+merged_df1 = load_data()
+
 def page1_hourly_analysis():
     """1페이지: 시간대별 화장실 대란 분석"""
 
