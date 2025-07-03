@@ -106,19 +106,34 @@ tab1, tab2, tab3= st.tabs(["⏰시간대별 화장실 대란 분석", "화장실
 
 @st.cache_data
 def load_data():
-    """데이터 로드 함수"""
+    """GitHub LFS에서 데이터 로드 (디버깅 포함)"""
     try:
-        # 배포 환경에서의 경로
-        if os.path.exists("data/data.csv"):
-            return pd.read_csv("data/data.csv", encoding='utf-8')
-        # 로컬 환경에서의 경로
-        elif os.path.exists(r"C:\auto_excel\photofolio\data\data.csv"):
-            return pd.read_csv(r"C:\auto_excel\photofolio\data\data.csv", encoding='utf-8')
+        url = 'https://github.com/seungmin956/toilet_project_lfs/raw/master/data/data.csv'
+        st.write(f"데이터 로드 시도 중: {url}")
+        
+        df = pd.read_csv(url, encoding='utf-8')
+        
+        # 디버깅 정보 출력
+        st.write(f"✅ 데이터 로드 성공!")
+        st.write(f"📊 데이터 형태: {df.shape}")
+        st.write(f"📝 컬럼명: {df.columns.tolist()}")
+        st.write(f"🔍 처음 3행:")
+        st.dataframe(df.head(3))
+        
+        # '행정동_동' 컬럼이 있는지 확인
+        if '행정동_동' in df.columns:
+            st.success("✅ '행정동_동' 컬럼 확인됨")
         else:
-            st.error("데이터 파일을 찾을 수 없습니다!")
-            return pd.DataFrame()
+            st.error("❌ '행정동_동' 컬럼이 없습니다!")
+            st.write("유사한 컬럼들:")
+            for col in df.columns:
+                if '동' in col or '지역' in col or '구' in col:
+                    st.write(f"  - {col}")
+        
+        return df
+        
     except Exception as e:
-        st.error(f"데이터 로드 오류: {e}")
+        st.error(f"데이터 로드 오류: {str(e)}")
         return pd.DataFrame()
 
 # 전역 데이터 로드
