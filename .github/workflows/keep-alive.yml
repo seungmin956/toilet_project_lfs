@@ -1,0 +1,14 @@
+name: Keep Streamlit App Alive
+on:
+  schedule:
+    - cron: '0 */11 * * *'  # 11시간마다 실행
+  workflow_dispatch:  # 수동 실행 가능
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Streamlit App
+        run: |
+          echo "Pinging app to keep it alive..."
+          curl -s https://당신의앱이름.streamlit.app || echo "Ping failed but continuing..."
+          echo "Ping completed at $(date)"
